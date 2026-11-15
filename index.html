@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Konsül</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0f13;--card:#181a21;--line:#2a2d38;--txt:#eceef3;--mut:#8a8fa0;--p1:#3fa9ff;--p2:#ff5c7a;--gold:#ffc83d;--ok:#3ddc84}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1200px 600px at 50% -200px,#1d2130,var(--bg));color:var(--txt);font-family:Inter,sans-serif;min-height:100vh}
+h1{font-family:'Bebas Neue';font-size:clamp(34px,6vw,58px);letter-spacing:2px;margin:0;text-align:center}
+h1.brand{font-size:clamp(46px,9vw,84px);letter-spacing:8px;background:linear-gradient(180deg,#ffe28a,#ffb300 60%,#c47a00);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+.sub{text-align:center;font-family:'Bebas Neue';letter-spacing:2px;font-size:20px;color:var(--mut)}.sub span{color:var(--gold)}
+.vsb{text-align:center;font-family:'Bebas Neue';letter-spacing:1px;font-size:20px;color:#ff9a4d;margin:-4px 0 10px}
+.win{font-family:'Bebas Neue';font-size:56px;letter-spacing:2px;background:linear-gradient(180deg,#ffe28a,#ffb300);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+.trophy{font-size:72px;animation:bounce 1s infinite alternate}@keyframes bounce{to{transform:translateY(-10px) scale(1.08)}}
+.pick{padding:18px;font-size:20px;font-family:'Bebas Neue';letter-spacing:1px;color:#fff}
+h3{margin:0 0 10px;font-family:'Bebas Neue';letter-spacing:1px;font-size:24px}
+.wrap{max-width:1150px;margin:0 auto;padding:20px}
+.nav{display:flex;gap:8px;justify-content:center;margin:14px 0}
+.nav button.on{background:var(--gold);color:#111}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+label{font-size:13px;color:var(--mut);font-weight:600;display:block;margin-bottom:6px}
+input,textarea,select{width:100%;background:#0f1117;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:9px;font:inherit}
+textarea{min-height:110px;resize:vertical}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;background:#2a2f3d;color:var(--txt);transition:.15s}
+button:hover:not(:disabled){filter:brightness(1.2);transform:translateY(-1px)}
+button:disabled{opacity:.35;cursor:not-allowed}
+.sm{padding:6px 10px;font-size:13px}.del{background:#3a1f27;color:#ff8da1}
+.go{background:var(--gold);color:#111;font-size:22px;padding:14px 44px;font-family:'Bebas Neue';letter-spacing:2px}
+.hint{font-size:12px;color:var(--mut);margin-top:6px}
+.center{text-align:center}.mt{margin-top:14px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hidden{display:none!important}
+.err{color:var(--p2);font-weight:600;margin-top:8px;min-height:18px}
+.ok{color:var(--ok)}
+.ro .edit{display:none!important}
+.ck{display:inline-flex;align-items:center;gap:4px;background:#232736;border:1px solid var(--line);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:600;cursor:pointer;user-select:none;margin:0;color:var(--txt)}
+.ck input{width:auto;margin:0}.ck:has(input:checked){background:#2b2140;border-color:#7d5cd6;color:#d8c8ff}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--mut);font-size:12px}
+.tag{display:inline-block;background:#2b2140;color:#c7b4ff;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600}
+/* game */
+.players{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.players{grid-template-columns:1fr}}
+.pl{border:2px solid var(--line);transition:.2s}
+.pl.active{box-shadow:0 0 0 3px var(--c),0 0 30px -5px var(--c);border-color:var(--c)}
+.pl h2{margin:0;font-family:'Bebas Neue';letter-spacing:1px;font-size:30px;color:var(--c);display:flex;justify-content:space-between}
+.money{color:var(--gold)}
+.mem{padding:8px 10px;border-radius:8px;background:#11131a;margin-top:6px;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+.mem small{color:var(--mut)}
+.turn{font-family:'Bebas Neue';font-size:30px;letter-spacing:1px;text-align:center;margin:18px 0 10px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.actions{grid-template-columns:1fr}}
+.act{padding:22px;font-size:20px;font-family:'Bebas Neue';letter-spacing:1.5px;border-radius:14px}
+.act.c{background:linear-gradient(135deg,#1d4f7a,#163a5a)}.act.k{background:linear-gradient(135deg,#4b2f7a,#2b2140)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:12px}
+.fd{aspect-ratio:3/4;border-radius:12px;background:repeating-linear-gradient(45deg,#2b2140,#2b2140 10px,#231a36 10px,#231a36 20px);border:2px solid #4b3a72;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:42px;color:#9d86d6;cursor:pointer;transition:.2s}
+.fd:hover{transform:rotate(-2deg) scale(1.04);border-color:var(--gold)}
+.modal{position:fixed;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;z-index:10;padding:20px}
+.modal .card{max-width:460px;width:100%;text-align:center;animation:pop .25s;max-height:90vh;overflow:auto}
+@keyframes pop{from{transform:scale(.8) rotateY(70deg);opacity:0}}
+.big{font-family:'Bebas Neue';font-size:46px;letter-spacing:1px;margin:6px 0}
+.desc{color:#c9ccd6;font-size:15px;line-height:1.45;margin:8px 0}
+.price{color:var(--gold);font-weight:800;font-size:20px}
+.al{background:var(--ok);color:#111}.ver{background:var(--p2);color:#fff}
+.choices{display:grid;gap:8px;margin-top:14px}
+.log{max-height:180px;overflow:auto;font-size:13px;color:var(--mut)}
+.log div{padding:3px 0;border-bottom:1px dashed #222}
+
+@media(max-width:600px){
+  .wrap{padding:12px}
+  h1.brand{font-size:52px}
+  .win{font-size:44px}
+  .card{padding:12px;border-radius:12px}
+  .players{grid-template-columns:1fr 1fr;gap:8px}
+  .pl h2{font-size:22px;flex-direction:column;align-items:flex-start}
+  .mem{flex-direction:column;gap:2px;font-size:13px;padding:6px 8px}
+  .mem .tag{font-size:11px}
+  .turn{font-size:26px;position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0;margin:10px -12px 8px;border-bottom:1px solid var(--line)}
+  .actions{grid-template-columns:1fr 1fr;gap:8px}
+  .act{padding:16px 8px;font-size:18px}
+  .act small{display:none}
+  .cards{grid-template-columns:repeat(3,1fr)}
+  .big{font-size:38px}
+  .modal{padding:12px;align-items:flex-end}
+  .modal .card{border-radius:16px 16px 12px 12px}
+  .choices button{padding:15px;font-size:16px}
+  .nav button{flex:1}
+  table{font-size:13px}
+  th:nth-child(3),td:nth-child(3){min-width:140px}
+}
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+input,textarea,select{font-size:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="brand">KONSÜL</h1><div class="sub"><span>$20</span> ile Adam Aldım / Verdim</div>
+  <div class="nav"><button id="navG" class="on">🎮 Oyun</button><button id="navP">📚 Havuz</button></div>
+
+  <!-- ===== HAVUZ ===== -->
+  <section id="poolView" class="hidden">
+    <div id="syncInfo" class="hint center" style="margin-bottom:10px"></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Kategoriler</h3>
+        <div class="row edit"><input id="catIn" placeholder="Yeni kategori" style="flex:1"><button id="catAdd">Ekle</button></div>
+        <div id="catList" class="row mt"></div>
+      </div>
+      <div class="card edit">
+        <h3>Karakter Ekle</h3>
+        <div class="grid2" style="gap:8px">
+          <input id="chName" placeholder="İsim" style="grid-column:1/-1">
+        </div>
+        <label class="mt">Kategoriler (birden fazla seçebilirsin)</label><div id="chCats" class="row"></div>
+        <textarea id="chDesc" class="mt" style="min-height:70px" placeholder="Tanım / açıklama"></textarea>
+        <button id="chAdd" class="al mt" style="width:100%">+ Karakteri Ekle</button>
+        <div class="err" id="chErr"></div>
+      </div>
+    </div>
+    <div class="card mt edit">
+      <h3>Toplu Ekle</h3>
+      <textarea id="bulk" placeholder="İsim | Kategori1, Kategori2 | Tanım&#10;Örn: Arda Güler | Futbolcu, Türk | Real Madrid'in genç yıldızı"></textarea>
+      <div class="hint">Her satır bir karakter. Birden fazla kategoriyi virgülle ayır. Olmayan kategori otomatik oluşturulur. Tanım opsiyonel.</div>
+      <div class="row mt"><button id="bulkAdd">Toplu Ekle</button><span id="bulkMsg" class="ok"></span></div>
+    </div>
+    <div class="card mt">
+      <div class="row" style="justify-content:space-between"><h3>Havuz (<span id="cnt">0</span>)</h3>
+        <div class="row"><select id="filt" style="width:auto"></select><input id="srch" placeholder="Ara..." style="width:160px"></div></div>
+      <div style="overflow:auto"><table><thead><tr><th>İsim</th><th>Kategori</th><th>Tanım</th><th></th></tr></thead><tbody id="tbl"></tbody></table></div>
+    </div>
+    <div class="card mt">
+      <h3>⚔ VS Türleri (<span id="vsCnt">0</span>)</h3>
+      <div class="row edit"><input id="vsName" placeholder="VS türü — örn. Kim kavgada kazanır?" style="flex:2;min-width:180px">
+        <input id="vsDescIn" placeholder="Açıklama (opsiyonel)" style="flex:3;min-width:180px"><button id="vsAdd">Ekle</button></div>
+      <div class="err" id="vsErr"></div>
+      <div id="vsList"></div>
+    </div>
+    <div class="card mt">
+      <h3>Yedekle / Paylaş</h3>
+      <div class="row"><button id="expBtn">Havuzu JSON olarak göster</button><button id="cpyBtn">Kopyala</button>
+        <button id="impBtn" type="button" class="edit">JSON İçe Aktar</button>
+        <input type="file" id="impFile" accept=".json,application/json" class="hidden"><button id="clrBtn" class="del edit">Havuzu Temizle</button></div>
+      <textarea id="json" class="mt" placeholder="JSON buraya — yapıştırıp 'Yapıştırılanı Yükle' de diyebilirsin"></textarea>
+      <div class="row mt"><button id="pasteLoad" class="edit">Yapıştırılanı Yükle</button><span id="jsonMsg"></span></div>
+    </div>
+  </section>
+
+  <!-- ===== KURULUM ===== -->
+  <section id="setup">
+    <div class="grid2">
+      <div class="card"><label>1. Oyuncu</label><input id="n1" placeholder="İsim"></div>
+      <div class="card"><label>2. Oyuncu</label><input id="n2" placeholder="İsim"></div>
+    </div>
+    <div class="grid2 mt">
+      <div class="card"><label>Başlangıç bütçesi ($)</label><input id="budget" type="number" min="1" value="20">
+        <label class="mt">Maks. karakter (kişi başı)</label><input id="maxTeam" type="number" min="1" value="5"></div>
+      <div class="card"><label>Açık artırma</label><div class="desc" style="margin:0">Her karakter <b style="color:var(--gold)">$1</b>'den açılır, sırayla arttırılır. "Verdim" diyen bırakır, en yüksek teklifi veren alır.</div></div>
+    </div>
+    <div class="card mt"><label>Oyunda kullanılacak kategoriler</label><div id="useCats" class="row"></div>
+      <div class="hint" id="poolInfo"></div></div>
+    <div class="card mt"><label>⚔ VS Türü</label><select id="vsSel"></select><div class="hint" id="vsSelDesc"></div></div>
+    <div class="err center" id="setupErr"></div>
+    <div class="center mt"><button class="go" id="startBtn">BAŞLA</button></div>
+  </section>
+
+  <!-- ===== OYUN ===== -->
+  <section id="game" class="hidden">
+    <div class="players" id="players"></div>
+    <div class="turn" id="turn"></div>
+    <div class="vsb" id="vsBanner"></div>
+    <div class="actions" id="actions">
+      <button class="act c" id="actC" style="grid-column:1/-1;font-size:26px">🎲 Kategori Çek<br><small style="font-family:Inter;font-size:12px;letter-spacing:0;opacity:.75">Rastgele kategori gelir → teklif verilir → karakter sonra açılır</small></button>
+    </div>
+    <div class="row mt" style="justify-content:center">
+      <button id="undoBtn">↩ Geri Al</button><button id="passBtn">⏭ Sırayı Geç</button>
+      <button id="endBtn">🏁 Bitir / Sonuç</button><button id="resetBtn">⚙ Yeni Oyun</button>
+    </div>
+    <div class="hint center" id="left"></div>
+    <div class="card mt"><label>Hamle Geçmişi</label><div class="log" id="log"></div></div>
+  </section>
+</div>
+
+<div id="modal" class="modal hidden"><div class="card" id="mb"></div></div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const rnd = a => a[Math.random() * a.length | 0];
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const uid = () => Math.random().toString(36).slice(2, 10);
+  const store = {
+    get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+  };
+
+  // ---------- HAVUZ ----------
+  const EMBED = {"cats": ["Çırak", "Hoca", "Müdür", "Ana Karakter", "Müdür Yardımcısı", "Ajan", "Fraksiyon Başkanı", "Feylerle İlişkili", "Kuruluşla İlişkili", "Kurucu", "Bohem Korusu", "Renklerle İlişkili", "Sanatla İlişkili", "Gölgeyle İlişkili", "Işıkla İlişkili", "Küf Savaşında Vardı", "Turnuvada Dövüştü", "İstihbarat", "Uzaktan Silahlarla İlgili", "Hoca Asistanı", "Kaosla ilişkili", "Ölümle İlişkili", "Yatmak istenenler", "Deli", "Yaşamla İlişkili", "Ateşle İlişkili", "Yabani", "Ana Karaktere Yakın", "Aura Akıyor", "Korkutucu", "Ruhla İlişkili", "Avel", "Teknikle İlişkili", "Kanla İlişkili", "EYT Vurmuş", "Stratejist", "O.E", "Zihinle İlişkili", "Ritüelle İlişkili"], "chars": [{"cats": ["Çırak", "Müdür", "Feylerle İlişkili", "Kuruluşla İlişkili", "Renklerle İlişkili", "Kaosla ilişkili", "Deli", "Yabani", "O.E"], "desc": "", "id": "df6egzl9", "name": "Kvaçi"}, {"cats": ["Çırak", "Renklerle İlişkili", "Sanatla İlişkili", "Kaosla ilişkili", "Yatmak istenenler", "Ana Karaktere Yakın", "Kanla İlişkili", "EYT Vurmuş", "Stratejist", "Ritüelle İlişkili"], "desc": "", "id": "fitf9fj0", "name": "Darum"}, {"cats": ["Çırak", "Kaosla ilişkili", "Aura Akıyor", "Korkutucu", "Stratejist", "Ritüelle İlişkili"], "desc": "", "id": "870rqziv", "name": "Centilmen"}, {"cats": ["Çırak", "Kaosla ilişkili", "Deli", "Aura Akıyor"], "desc": "Komutan", "id": "rgqgx0f6", "name": "Vael"}, {"cats": ["Çırak", "Turnuvada Dövüştü", "Ruhla İlişkili"], "desc": "Ruh abla", "id": "zjxpfxqd", "name": "Helia"}, {"cats": ["Çırak", "Kuruluşla İlişkili", "Yabani", "Ana Karaktere Yakın", "Korkutucu", "Avel"], "desc": "", "id": "y6rxg0ca", "name": "Dokuz"}, {"cats": ["Çırak", "Turnuvada Dövüştü", "Teknikle İlişkili"], "desc": "", "id": "cg3hw1ex", "name": "Volt"}, {"cats": ["Çırak", "Hoca", "Müdür Yardımcısı", "Sanatla İlişkili", "Turnuvada Dövüştü", "Kaosla ilişkili", "Deli", "Aura Akıyor", "Korkutucu", "Ruhla İlişkili", "Ritüelle İlişkili"], "desc": "", "id": "ew3zyhu7", "name": "Barathrum"}, {"cats": ["Müdür", "Ana Karakter", "Müdür Yardımcısı", "Feylerle İlişkili", "Kuruluşla İlişkili", "Kurucu", "Renklerle İlişkili", "Sanatla İlişkili", "Gölgeyle İlişkili", "Işıkla İlişkili", "Küf Savaşında Vardı", "İstihbarat", "Uzaktan Silahlarla İlgili", "Kaosla ilişkili", "Ölümle İlişkili", "Yaşamla İlişkili", "Ateşle İlişkili", "Yabani", "Ana Karaktere Yakın", "Aura Akıyor", "Korkutucu", "Ruhla İlişkili", "Teknikle İlişkili", "Stratejist"], "desc": "", "id": "jaoj1gr0", "name": "Daegon"}, {"cats": ["Çırak", "Müdür", "Kaosla ilişkili", "Ölümle İlişkili", "Deli", "Yabani", "Stratejist", "O.E"], "desc": "", "id": "opx4sl76", "name": "Kızıl Şeytan"}, {"cats": ["Çırak", "Müdür", "Kuruluşla İlişkili", "Kurucu", "Renklerle İlişkili", "Sanatla İlişkili", "İstihbarat", "Deli", "Aura Akıyor", "Korkutucu", "Teknikle İlişkili", "Stratejist", "O.E"], "desc": "", "id": "4e8u5t8w", "name": "Time Lord"}, {"cats": ["Müdür Yardımcısı", "Feylerle İlişkili", "Kuruluşla İlişkili", "Kurucu", "Avel", "O.E"], "desc": "", "id": "bt3athsr", "name": "Chernobog"}, {"cats": ["Çırak", "Müdür Yardımcısı", "Renklerle İlişkili", "Sanatla İlişkili", "Turnuvada Dövüştü", "Kaosla ilişkili", "Ana Karaktere Yakın", "Korkutucu"], "desc": "", "id": "yi9jtu3d", "name": "Ar-Zhang"}, {"cats": ["Hoca", "Kuruluşla İlişkili", "Ölümle İlişkili", "Yabani", "Aura Akıyor", "Ruhla İlişkili", "Teknikle İlişkili", "Kanla İlişkili", "EYT Vurmuş"], "desc": "", "id": "dtfo8qpu", "name": "Mezarcı"}, {"cats": ["Fraksiyon Başkanı", "Ana Karaktere Yakın", "Kanla İlişkili", "Stratejist", "O.E"], "desc": "Vampir Fraksiyonu Başkanı", "id": "bkc37dlk", "name": "Blade"}, {"cats": ["Fraksiyon Başkanı", "Işıkla İlişkili", "Turnuvada Dövüştü", "Uzaktan Silahlarla İlgili", "Yabani"], "desc": "298 Spartalılar Başkanı", "id": "tfy42yux", "name": "Leonidas"}, {"cats": ["Fraksiyon Başkanı", "Renklerle İlişkili", "Sanatla İlişkili", "Yabani", "Ana Karaktere Yakın", "Aura Akıyor", "Korkutucu", "Kanla İlişkili"], "desc": "Geyşa Fraksiyonu Başkanı", "id": "yb6vok0m", "name": "Hayabusa"}, {"cats": ["Fraksiyon Başkanı", "Renklerle İlişkili", "Sanatla İlişkili", "Kaosla ilişkili"], "desc": "Geyşa Fraksiyonu Başkanı", "id": "s540raux", "name": "Leydi Kimson"}, {"cats": ["Fraksiyon Başkanı", "Deli", "Yabani", "Aura Akıyor", "Korkutucu"], "desc": "Camdan düşmüş abimiz, Disiplin Fraksiyonu Başkanı", "id": "1lh0lcm5", "name": "Kırık"}, {"cats": ["Fraksiyon Başkanı", "Bohem Korusu", "Sanatla İlişkili", "Turnuvada Dövüştü", "Kaosla ilişkili", "Teknikle İlişkili", "Stratejist", "O.E"], "desc": "", "id": "adm6m7dp", "name": "Velar"}, {"cats": ["Fraksiyon Başkanı", "Turnuvada Dövüştü", "Uzaktan Silahlarla İlgili", "Teknikle İlişkili"], "desc": "Kovboy Fraksiyon Başkanı", "id": "aqy2fapu", "name": "Kovboy Cliff"}, {"cats": ["Hoca", "Turnuvada Dövüştü", "Stratejist", "O.E"], "desc": "", "id": "gjoz9msf", "name": "Saraswati"}, {"cats": ["Feylerle İlişkili", "Kuruluşla İlişkili", "Ruhla İlişkili", "Kanla İlişkili"], "desc": "", "id": "3rpahza4", "name": "Gaelia"}, {"cats": ["Çırak", "Kuruluşla İlişkili"], "desc": "Eski Kvaçi", "id": "9pujll4s", "name": "Leonel"}, {"cats": ["Işıkla İlişkili"], "desc": "", "id": "uunx88ja", "name": "Papa Gelasius"}, {"cats": ["İstihbarat", "EYT Vurmuş", "Ritüelle İlişkili"], "desc": "", "id": "q38axuxw", "name": "Büyüktaş"}, {"cats": ["Gölgeyle İlişkili", "İstihbarat", "Yatmak istenenler", "Ana Karaktere Yakın", "Stratejist"], "desc": "", "id": "oskjcra8", "name": "Davian"}, {"cats": ["Hoca", "Uzaktan Silahlarla İlgili", "Ana Karaktere Yakın"], "desc": "", "id": "duxyhuon", "name": "Üveyl El-Karani"}, {"cats": ["Işıkla İlişkili", "Ana Karaktere Yakın"], "desc": "", "id": "wch2rbwg", "name": "Kliksios"}, {"cats": ["Hoca Asistanı", "Kaosla ilişkili"], "desc": "", "id": "easkwtfw", "name": "Minshalla"}, {"cats": ["Küf Savaşında Vardı"], "desc": "", "id": "p043p9tn", "name": "Bakasura"}, {"cats": ["Çırak", "Renklerle İlişkili", "Kaosla ilişkili", "Kanla İlişkili"], "desc": "", "id": "g77n12sz", "name": "Akara"}, {"cats": ["Uzaktan Silahlarla İlgili", "Ölümle İlişkili", "Yatmak istenenler", "Ana Karaktere Yakın"], "desc": "", "id": "mg97my72", "name": "Charlotte"}, {"cats": ["Çırak", "Işıkla İlişkili"], "desc": "", "id": "rs6bmxjs", "name": "Allaniel"}, {"cats": ["Çırak", "İstihbarat"], "desc": "", "id": "3lv4lval", "name": "Kassandra"}, {"cats": ["Deli", "Yaşamla İlişkili"], "desc": "", "id": "2lg4y055", "name": "Vilo"}, {"cats": ["Kaosla ilişkili", "Yaşamla İlişkili", "Kanla İlişkili", "O.E"], "desc": "", "id": "2hbhtlrv", "name": "Grimmwich"}, {"cats": ["Hoca", "Ölümle İlişkili", "Deli"], "desc": "", "id": "9rtd3cip", "name": "En-Messerah"}, {"cats": ["Hoca", "Gölgeyle İlişkili", "Yabani"], "desc": "", "id": "dk9hagad", "name": "Twine Lector"}, {"cats": ["Kaosla ilişkili", "Yabani", "Ana Karaktere Yakın", "Ruhla İlişkili"], "desc": "", "id": "xhgcwtfv", "name": "Leydi Slyviana"}, {"cats": ["Ana Karakter", "Işıkla İlişkili", "Aura Akıyor", "Kanla İlişkili", "Ritüelle İlişkili"], "desc": "", "id": "idyrp8wa", "name": "Yusha"}, {"cats": ["EYT Vurmuş"], "desc": "", "id": "7rzczizp", "name": "Gessop"}, {"cats": ["Ana Karakter", "Renklerle İlişkili", "Sanatla İlişkili", "Yaşamla İlişkili", "Ateşle İlişkili", "Ruhla İlişkili", "Kanla İlişkili"], "desc": "", "id": "9kmogwan", "name": "Hex"}, {"cats": ["Ana Karakter", "Sanatla İlişkili", "Gölgeyle İlişkili", "Uzaktan Silahlarla İlgili", "Kaosla ilişkili", "Deli"], "desc": "", "id": "xpzzh2d8", "name": "Caitlyn"}, {"cats": ["Ana Karakter", "Kaosla ilişkili", "Deli", "Avel", "Teknikle İlişkili", "Stratejist", "Ritüelle İlişkili"], "desc": "", "id": "82or7tuf", "name": "Otatu"}, {"cats": ["Renklerle İlişkili", "Turnuvada Dövüştü", "Yatmak istenenler", "Ateşle İlişkili", "Ana Karaktere Yakın", "Stratejist", "O.E"], "desc": "", "id": "z74fp4aq", "name": "Hegel"}, {"cats": ["Feylerle İlişkili", "Ana Karaktere Yakın", "Kanla İlişkili"], "desc": "", "id": "b4gag3pc", "name": "Aketosh"}, {"cats": ["Hoca", "Feylerle İlişkili", "Yaşamla İlişkili", "Yabani", "Ana Karaktere Yakın", "Teknikle İlişkili", "Kanla İlişkili"], "desc": "", "id": "wgtzbzcj", "name": "Farabi"}, {"cats": ["Hoca", "Uzaktan Silahlarla İlgili", "Deli", "Korkutucu", "Teknikle İlişkili", "Stratejist"], "desc": "", "id": "3rp7hyuz", "name": "Azraq"}, {"cats": ["Hoca", "Sanatla İlişkili", "Işıkla İlişkili", "Ana Karaktere Yakın", "Avel", "Teknikle İlişkili"], "desc": "", "id": "aml1poz1", "name": "Peder Hugo"}, {"cats": ["Hoca", "Ateşle İlişkili", "Ana Karaktere Yakın", "Ruhla İlişkili"], "desc": "", "id": "egmn2bax", "name": "Arshin Tengri"}, {"cats": ["Hoca", "Deli", "Yabani", "Avel", "EYT Vurmuş", "Stratejist", "O.E"], "desc": "", "id": "j9d7ajf7", "name": "Şarapçı Hobo"}, {"cats": ["İstihbarat", "Ana Karaktere Yakın", "Teknikle İlişkili"], "desc": "", "id": "uk0kr2t4", "name": "Giovanni Giorgio"}, {"cats": ["Çırak", "Renklerle İlişkili", "Sanatla İlişkili", "Gölgeyle İlişkili", "Işıkla İlişkili", "Uzaktan Silahlarla İlgili", "Kaosla ilişkili", "Ölümle İlişkili", "Yaşamla İlişkili", "Ateşle İlişkili", "Ruhla İlişkili", "Teknikle İlişkili", "Kanla İlişkili", "Stratejist", "Zihinle İlişkili"], "desc": "", "id": "6dig2kg5", "name": "Malikar"}, {"cats": ["Çırak", "Sanatla İlişkili", "Teknikle İlişkili", "Stratejist"], "desc": "", "id": "hc4lsojc", "name": "Liarra Diaordon"}, {"cats": ["Kurucu", "Bohem Korusu", "Korkutucu"], "desc": "", "id": "8ef4fm8o", "name": "Palatar"}, {"cats": ["Kurucu", "Bohem Korusu", "Kaosla ilişkili", "Deli", "Yabani", "Korkutucu", "Stratejist", "O.E"], "desc": "", "id": "phmopwv1", "name": "Glottar"}, {"cats": ["Stratejist", "O.E"], "desc": "", "id": "uxhxf5cz", "name": "Kuru Şeytan"}, {"cats": ["Ana Karaktere Yakın", "Teknikle İlişkili"], "desc": "", "id": "6lb655gv", "name": "Malia"}, {"cats": ["Fraksiyon Başkanı", "Kaosla ilişkili", "Deli", "Teknikle İlişkili", "Kanla İlişkili", "Stratejist"], "desc": "", "id": "byonbamg", "name": "Ho"}, {"cats": ["Ajan", "Kaosla ilişkili", "Deli", "Korkutucu", "Teknikle İlişkili", "Kanla İlişkili", "Stratejist"], "desc": "", "id": "xy34aex3", "name": "Palyaço Al"}, {"cats": ["Teknikle İlişkili"], "desc": "", "id": "pta0qh96", "name": "Mahmut"}, {"cats": ["Fraksiyon Başkanı", "Feylerle İlişkili", "Kaosla ilişkili", "Yabani", "Aura Akıyor", "Korkutucu", "Ruhla İlişkili", "Kanla İlişkili", "EYT Vurmuş", "O.E"], "desc": "", "id": "6n8mzw3x", "name": "Vampir Lord"}, {"cats": ["Renklerle İlişkili", "Ana Karaktere Yakın", "Ritüelle İlişkili"], "desc": "", "id": "94w73qfh", "name": "Craig"}], "vs": [{"desc": "", "id": "m073fyhc", "name": "Kim kavgada kazanır"}, {"desc": "", "id": "mergexcw", "name": "Kim aurada kazanır"}, {"desc": "", "id": "nkzmkn69", "name": "Kim laf dalaşında kazanır"}, {"desc": "", "id": "es3ncyk9", "name": "En çok hangi taraf sevilir?"}, {"desc": "", "id": "lvnnjaec", "name": "Mental olarak kim kazanır?"}, {"desc": "", "id": "nce0sudv", "name": "Hangi taraf daha delidir?"}, {"desc": "", "id": "obhk4z1n", "name": "Kim geceleri altına sıçırtır?"}]}; // GitHub sürümünde havuz buraya gömülür
+  let P = EMBED || store.get('aav_pool', {});
+  let db = null, canWrite = true, wq = Promise.resolve();
+  const sync = t => { $('syncInfo').textContent = t; };
+  const setRO = () => { canWrite = false; $('poolView').classList.add('ro'); };
+  const norm = d => {
+    const cats = new Set(Array.isArray(d?.cats) ? d.cats.map(String) : []);
+    const chars = (Array.isArray(d?.chars) ? d.chars : []).filter(c => c && c.name).map(c => {
+      const cs = [...new Set((Array.isArray(c.cats) ? c.cats : c.cat ? [c.cat] : []).map(String).filter(Boolean))];
+      cs.forEach(x => cats.add(x));
+      return { id: String(c.id || uid()), name: String(c.name), cats: cs, desc: String(c.desc || '') };
+    }).filter(c => c.cats.length);
+    const vs = (Array.isArray(d?.vs) ? d.vs : []).filter(v => v && v.name)
+      .map(v => ({ id: String(v.id || uid()), name: String(v.name), desc: String(v.desc || '') }));
+    return { cats: [...cats], chars, vs };
+  };
+  const savePool = () => {
+    if (EMBED) { renderPool(); renderSetup(); return; }
+    store.set('aav_pool', P); renderPool(); renderSetup();
+    if (!db || !canWrite) return;
+    const data = JSON.parse(JSON.stringify(P));
+    wq = wq.then(() => db.doc('pool/main').set(data)).catch(e => {
+      if (e?.code === 'invalid_argument') { setRO(); sync('Havuzu düzenleme yetkin yok (sadece görüntüleme).'); }
+      else if (e?.code === 'quota_exceeded') sync('Havuz kapasitesi dolu, bazı karakterleri sil.');
+      else sync('Kaydedilemedi: ' + (e?.message || 'bağlantı hatası'));
+    });
+  };
+
+  const addCat = name => {
+    name = name.trim(); if (!name) return null;
+    const ex = P.cats.find(c => c.toLowerCase() === name.toLowerCase());
+    if (ex) return ex; P.cats.push(name); return name;
+  };
+  const validPrice = v => { const n = parseFloat(String(v).replace(',', '.')); return isFinite(n) && n >= 0 ? n : null; };
+
+  $('catAdd').onclick = () => { if (addCat($('catIn').value)) { $('catIn').value = ''; savePool(); } };
+  $('catIn').onkeydown = e => { if (e.key === 'Enter') $('catAdd').click(); };
+
+  const hasCat = (ch, c) => ch.cats.includes(c);
+  const catTags = cs => `<span class="tags">${cs.map(c => `<span class="tag">${esc(c)}</span>`).join('')}</span>`;
+  const catChecks = (sel, attr) => P.cats.map(c => `<label class="ck"><input type="checkbox" ${attr}="${esc(c)}" ${sel.includes(c) ? 'checked' : ''}>${esc(c)}</label>`).join('')
+    || '<span class="hint">Önce kategori ekle</span>';
+  const checked = (root, attr) => [...root.querySelectorAll(`[${attr}]`)].filter(i => i.checked).map(i => i.getAttribute(attr));
+
+  $('chAdd').onclick = () => {
+    const name = $('chName').value.trim(), cats = checked($('chCats'), 'data-nc');
+    const err = !name ? 'İsim gir.' : !P.cats.length ? 'Önce kategori ekle.' : !cats.length ? 'En az bir kategori seç.' :
+      P.chars.some(c => c.name.toLowerCase() === name.toLowerCase()) ? 'Bu isim zaten havuzda.' : '';
+    $('chErr').textContent = err; if (err) return;
+    P.chars.push({ id: uid(), name, cats, desc: $('chDesc').value.trim() });
+    $('chName').value = $('chDesc').value = ''; $('chName').focus();
+    savePool();
+  };
+
+  $('bulkAdd').onclick = () => {
+    let n = 0, skip = 0;
+    $('bulk').value.split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
+      const [name, catStr, desc] = line.split('|').map(s => (s || '').trim());
+      const cats = [...new Set(catStr.split(/[,;]/).map(x => x.trim()).filter(Boolean).map(addCat))];
+      if (!name || !cats.length || P.chars.some(c => c.name.toLowerCase() === name.toLowerCase())) { skip++; return; }
+      P.chars.push({ id: uid(), name, cats, desc: desc || '' }); n++;
+    });
+    $('bulkMsg').textContent = `${n} eklendi${skip ? `, ${skip} atlandı (eksik/tekrar)` : ''}.`;
+    if (n) $('bulk').value = '';
+    savePool();
+  };
+
+  function renderPool() {
+    renderVsPool();
+    $('catList').innerHTML = P.cats.map((c, i) => {
+      const k = P.chars.filter(x => hasCat(x, c)).length;
+      return `<span class="tag">${esc(c)} (${k}) <a href="#" class="edit" data-dc="${i}" style="color:#ff8da1;text-decoration:none">✕</a></span>`;
+    }).join('') || '<span class="hint">Kategori yok</span>';
+    $('catList').querySelectorAll('[data-dc]').forEach(a => a.onclick = e => {
+      e.preventDefault(); const c = P.cats[+a.dataset.dc];
+      const only = P.chars.filter(x => x.cats.length === 1 && hasCat(x, c)).length;
+      const drop = () => {
+        P.cats = P.cats.filter(x => x !== c);
+        P.chars = P.chars.map(x => ({ ...x, cats: x.cats.filter(y => y !== c) })).filter(x => x.cats.length);
+        savePool();
+      };
+      if (only) return confirmBox(`"${c}" silinirse sadece bu kategoride olan ${only} karakter de silinecek. Devam?`, drop);
+      drop();
+    });
+    const keep = checked($('chCats'), 'data-nc');
+    $('chCats').innerHTML = catChecks(keep, 'data-nc');
+    const f = $('filt').value;
+    $('filt').innerHTML = '<option value="">Tüm kategoriler</option>' + P.cats.map(c => `<option ${c === f ? 'selected' : ''}>${esc(c)}</option>`).join('');
+    const q = $('srch').value.toLowerCase();
+    const list = P.chars.filter(c => (!$('filt').value || hasCat(c, $('filt').value)) &&
+      (!q || (c.name + ' ' + c.desc).toLowerCase().includes(q)));
+    $('cnt').textContent = P.chars.length;
+    $('tbl').innerHTML = list.map(c => `<tr><td><b>${esc(c.name)}</b></td><td>${catTags(c.cats)}</td>
+      <td style="color:#c9ccd6">${esc(c.desc) || '<span class="hint">—</span>'}</td>
+      <td style="white-space:nowrap"><button class="sm edit" data-e="${c.id}">✎</button> <button class="sm del edit" data-d="${c.id}">Sil</button></td></tr>`).join('') || '<tr><td colspan="4" class="hint">Havuz boş</td></tr>';
+    $('tbl').querySelectorAll('[data-d]').forEach(b => b.onclick = () => { P.chars = P.chars.filter(c => c.id !== b.dataset.d); savePool(); });
+    $('tbl').querySelectorAll('[data-e]').forEach(b => b.onclick = () => editChar(b.dataset.e));
+  }
+  $('filt').onchange = renderPool; $('srch').oninput = renderPool;
+
+  // vs havuzu
+  $('vsAdd').onclick = () => {
+    const name = $('vsName').value.trim();
+    const err = !name ? 'VS türü gir.' : P.vs.some(v => v.name.toLowerCase() === name.toLowerCase()) ? 'Bu VS türü zaten var.' : '';
+    $('vsErr').textContent = err; if (err) return;
+    P.vs.push({ id: uid(), name, desc: $('vsDescIn').value.trim() });
+    $('vsName').value = $('vsDescIn').value = ''; savePool();
+  };
+  $('vsName').onkeydown = e => { if (e.key === 'Enter') $('vsAdd').click(); };
+  function renderVsPool() {
+    $('vsCnt').textContent = P.vs.length;
+    $('vsList').innerHTML = P.vs.map(v => `<div class="mem" style="flex-direction:row;align-items:center">
+      <span><b>${esc(v.name)}</b>${v.desc ? `<br><small>${esc(v.desc)}</small>` : ''}</span>
+      <button class="sm del edit" data-dv="${v.id}">Sil</button></div>`).join('') || '<div class="hint">Henüz VS türü yok</div>';
+    $('vsList').querySelectorAll('[data-dv]').forEach(b => b.onclick = () => { P.vs = P.vs.filter(v => v.id !== b.dataset.dv); savePool(); });
+  }
+
+  function editChar(id) {
+    const ch = P.chars.find(c => c.id === id); if (!ch) return;
+    openModal(`<div class="big" style="font-size:32px">Karakteri Düzenle</div>
+      <input id="eName" value="${esc(ch.name)}" class="mt">
+      <label class="mt" style="text-align:left">Kategoriler</label><div class="row" id="eCats">${catChecks(ch.cats, 'data-ec')}</div>
+      <textarea id="eDesc" class="mt" style="min-height:80px">${esc(ch.desc)}</textarea>
+      <div class="err" id="eErr"></div>
+      <div class="choices"><button class="al" id="eSave">Kaydet</button><button id="eCx">Vazgeç</button></div>`);
+    $('eSave').onclick = () => {
+      const name = $('eName').value.trim(), cats = checked($('eCats'), 'data-ec');
+      const err = !name ? 'İsim gir.' : !cats.length ? 'En az bir kategori seç.' :
+        P.chars.some(c => c.id !== id && c.name.toLowerCase() === name.toLowerCase()) ? 'Bu isim zaten var.' : '';
+      $('eErr').textContent = err; if (err) return;
+      Object.assign(ch, { name, cats, desc: $('eDesc').value.trim() });
+      closeModal(); savePool();
+    };
+    $('eCx').onclick = closeModal;
+  }
+
+  // json
+  $('expBtn').onclick = () => { $('json').value = JSON.stringify(P, null, 2); };
+  $('cpyBtn').onclick = async () => {
+    $('json').value = JSON.stringify(P, null, 2);
+    try { await navigator.clipboard.writeText($('json').value); $('jsonMsg').innerHTML = '<span class="ok">Kopyalandı.</span>'; }
+    catch { $('json').select(); $('jsonMsg').textContent = 'Otomatik kopyalanamadı, seçili metni Ctrl+C ile kopyala.'; }
+  };
+  const loadJson = txt => {
+    try {
+      const d = JSON.parse(txt);
+      if (!Array.isArray(d.chars)) throw new Error('chars dizisi yok');
+      P = norm(d); savePool();
+      $('jsonMsg').innerHTML = `<span class="ok">${P.chars.length} karakter yüklendi.</span>`;
+    } catch (e) { $('jsonMsg').innerHTML = `<span style="color:var(--p2)">Geçersiz JSON: ${esc(e.message)}</span>`; }
+  };
+  $('pasteLoad').onclick = () => loadJson($('json').value);
+  $('impBtn').onclick = () => $('impFile').click();
+  $('impFile').onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader();
+    r.onload = () => loadJson(r.result); r.onerror = () => $('jsonMsg').textContent = 'Dosya okunamadı.'; r.readAsText(f); e.target.value = ''; };
+  $('clrBtn').onclick = () => confirmBox('Tüm havuz silinsin mi?', () => { P = norm({}); savePool(); });
+
+  // ---------- KURULUM ----------
+  const setupSaved = store.get('aav_setup', {});
+  ['n1', 'n2', 'budget', 'maxTeam'].forEach(k => { if (setupSaved[k] != null) $(k).value = setupSaved[k]; });
+  let useCats = new Set(setupSaved.useCats || []);
+  let firstSetup = !setupSaved.useCats;
+
+  function renderSetup() {
+    if (firstSetup) useCats = new Set(P.cats);
+    $('useCats').innerHTML = P.cats.map(c => {
+      const k = P.chars.filter(x => hasCat(x, c)).length;
+      return `<label class="tag" style="cursor:pointer;margin:0"><input type="checkbox" data-uc="${esc(c)}" ${useCats.has(c) ? 'checked' : ''} style="width:auto;margin-right:4px">${esc(c)} (${k})</label>`;
+    }).join('') || '<span class="hint">Havuzda kategori yok — önce 📚 Havuz sekmesinden ekle.</span>';
+    $('useCats').querySelectorAll('[data-uc]').forEach(cb => cb.onchange = () => {
+      firstSetup = false; cb.checked ? useCats.add(cb.dataset.uc) : useCats.delete(cb.dataset.uc); renderSetupInfo(); });
+    renderSetupInfo();
+    const cur = $('vsSel').value || setupSaved.vsSel || '';
+    $('vsSel').innerHTML = `<option value="">Oyun sonunda seç</option><option value="__rnd">🎲 Oyun sonunda rastgele çek</option>` +
+      P.vs.map(v => `<option value="${esc(v.id)}">${esc(v.name)}</option>`).join('');
+    $('vsSel').value = [...$('vsSel').options].some(o => o.value === cur) ? cur : '';
+    vsSelDesc();
+  }
+  const vsSelDesc = () => {
+    const v = P.vs.find(x => x.id === $('vsSel').value);
+    $('vsSelDesc').textContent = v ? v.desc : P.vs.length ? '' : 'VS türü eklemek için 📚 Havuz sekmesine git.';
+  };
+  $('vsSel').onchange = vsSelDesc;
+  const renderSetupInfo = () => {
+    const k = P.chars.filter(c => c.cats.some(x => useCats.has(x))).length;
+    $('poolInfo').textContent = `Oyunda ${k} karakter kullanılacak.`;
+  };
+
+  // ---------- OYUN ----------
+  let S = null, hist = [], score = null;
+  const snap = () => hist.push(JSON.stringify(S));
+  const other = i => 1 - i;
+  const log = t => S.log.unshift(t);
+
+  function startGame() {
+    const n1 = $('n1').value.trim(), n2 = $('n2').value.trim();
+    const budget = validPrice($('budget').value);
+    const maxTeam = parseInt($('maxTeam').value, 10);
+    const deck = P.chars.filter(c => c.cats.some(x => useCats.has(x)));
+    const err = !n1 || !n2 ? 'İki oyuncu ismini de gir.' : !budget ? 'Bütçe 0’dan büyük olmalı.' : !(maxTeam >= 1) ? 'Maks. karakter en az 1 olmalı.' :
+      deck.length < 2 ? 'Seçili kategorilerde en az 2 karakter olmalı.' : '';
+    $('setupErr').textContent = err; if (err) return;
+    const vsSel = $('vsSel').value;
+    store.set('aav_setup', { n1, n2, budget, maxTeam, useCats: [...useCats], vsSel });
+    if (!score || score.names.join('|') !== n1 + '|' + n2) score = { names: [n1, n2], w: [0, 0], d: 0 };
+    S = {
+      players: [n1, n2].map(name => ({ name, money: budget, team: [] })), max: maxTeam,
+      deck: deck.map(c => ({ ...c, cats: c.cats.filter(x => useCats.has(x)) })),
+      cats: shuffle([...useCats].filter(c => deck.some(x => hasCat(x, c)))),
+      turn: Math.random() < .5 ? 0 : 1, log: [],
+      vsMode: vsSel === '__rnd' ? 'rnd' : vsSel ? 'fixed' : 'end',
+      vs: P.vs.find(v => v.id === vsSel) || null, result: null
+    };
+    hist = [];
+    log(`🎲 Kura: ${S.players[S.turn].name} başlıyor.`);
+    if (S.vs) log(`⚔ VS türü: ${S.vs.name}`);
+    $('setup').classList.add('hidden'); $('game').classList.remove('hidden');
+    renderGame();
+  }
+  $('startBtn').onclick = startGame;
+
+  const catsLeft = () => S.cats.filter(c => S.deck.some(x => hasCat(x, c)));
+
+  const isFull = p => p.team.length >= S.max;
+  const canPlay = i => S.players[i].money >= 1 && !isFull(S.players[i]);
+  const isOver = () => !catsLeft().length || (!canPlay(0) && !canPlay(1));
+  $('actC').onclick = () => { const cl = catsLeft(); if (cl.length) reveal(rnd(cl)); };
+
+  function reveal(cat) {
+    const t = S.turn, o = other(t);
+    const opener = canPlay(t) ? t : canPlay(o) ? o : -1;
+    if (opener < 0) {
+      openModal(`<div class="big">${esc(cat)}</div><div class="err">İki oyuncunun da parası bitti.</div>
+        <div class="choices"><button id="mX">Tamam</button></div>`);
+      $('mX').onclick = closeModal; return;
+    }
+    renderAuction({ cat, price: 1, leader: opener, actor: other(opener),
+      steps: [`${S.players[opener].name} $1 ile açtı`] });
+  }
+
+  function renderAuction(A) {
+    const L = S.players[A.leader], X = S.players[A.actor];
+    const col = i => i ? 'var(--p2)' : 'var(--p1)';
+    const xFull = isFull(X);
+    const max = xFull ? 0 : X.money - A.price;
+    const n = S.deck.filter(c => hasCat(c, A.cat)).length;
+    const inc = [1, 2, 5].map(k => `<button class="sm" data-inc="${k}" ${max >= k ? '' : 'disabled'}>+$${k}</button>`).join('');
+    openModal(`<div class="hint">🎲 Gelen kategori</div>
+      <div class="big" style="color:#c7b4ff">${esc(A.cat)}</div>
+      <div class="desc">🔒 Karakter gizli — teklif bitince açılacak <span class="hint">(${n} aday)</span></div>
+      <div class="card mt" style="background:#11131a">
+        <div class="hint">En yüksek teklif</div>
+        <div class="win" style="font-size:54px">$${A.price}</div>
+        <div style="font-weight:800;color:${col(A.leader)}">🔨 ${esc(L.name)}</div>
+      </div>
+      <div class="mt" style="font-family:'Bebas Neue';font-size:24px;letter-spacing:1px">Sıra: <span style="color:${col(A.actor)}">${esc(X.name)}</span> <span class="hint">($${X.money})</span></div>
+      ${max >= 1 ? `<div class="row" style="justify-content:center;margin-top:8px">${inc}
+        <input id="aCustom" type="number" min="${A.price + 1}" max="${X.money}" placeholder="$${A.price + 1}+" style="width:90px">
+        <button class="sm" id="aSet">Teklif</button></div>` : `<div class="err">${xFull ? `${esc(X.name)}'ın takımı dolu (${S.max}/${S.max}).` : `${esc(X.name)}'ın parası arttırmaya yetmiyor.`}</div>`}
+      <div class="err" id="aErr"></div>
+      <div class="choices">
+        <button class="ver" id="aVer">🤝 VERDİM → ${esc(L.name)} ALIR ($${A.price})</button>
+        <button class="sm" id="aCx">İptal</button>
+      </div>
+      <div class="hint mt">${A.steps.map(esc).join(' → ')}</div>`);
+    const bid = v => {
+      if (!(v > A.price) || v > X.money || !Number.isInteger(v)) { $('aErr').textContent = `$${A.price + 1} ile $${X.money} arası tam sayı gir.`; return; }
+      A.price = v; A.steps.push(`${X.name} $${v}`);
+      A.leader = A.actor; A.actor = other(A.actor);
+      renderAuction(A);
+    };
+    $('mb').querySelectorAll('[data-inc]').forEach(b => b.onclick = () => bid(A.price + +b.dataset.inc));
+    if ($('aSet')) {
+      $('aSet').onclick = () => bid(parseInt($('aCustom').value, 10));
+      $('aCustom').onkeydown = e => { if (e.key === 'Enter') $('aSet').click(); };
+    }
+    $('aVer').onclick = () => commit(A);
+    $('aCx').onclick = closeModal;
+  }
+
+  function commit(A) {
+    const L = S.players[A.leader], X = S.players[A.actor];
+    const cands = S.deck.filter(c => hasCat(c, A.cat));
+    if (L.money < A.price || !cands.length) return;
+    snap();
+    const ch = rnd(cands); // karakteri sistem belirler
+    L.money = +(L.money - A.price).toFixed(2);
+    S.deck = S.deck.filter(c => c !== ch);
+    L.team.push({ name: ch.name, cats: ch.cats, price: A.price, via: A.cat });
+    log(`🔨 [${A.cat}] ${L.name} $${A.price}'a aldı (${X.name} verdi) → çıkan: ${ch.name}`);
+    S.turn = other(S.turn); renderGame();
+    const col = A.leader ? 'var(--p2)' : 'var(--p1)';
+    openModal(`<div class="hint">🔓 ${esc(A.cat)} kategorisinden çıkan</div>
+      <div class="big" style="font-size:54px">${esc(ch.name)}</div>
+      ${catTags(ch.cats)}
+      ${ch.desc ? `<div class="desc">${esc(ch.desc)}</div>` : ''}
+      <div class="mt" style="font-weight:800"><span style="color:${col}">${esc(L.name)}</span> aldı · <span style="color:var(--gold)">$${A.price}</span></div>
+      <div class="choices"><button class="al" id="rOk">Devam</button></div>`);
+    $('rOk').onclick = () => { closeModal(); if (isOver()) showEnd(); };
+  }
+
+  function renderGame() {
+    const col = ['var(--p1)', 'var(--p2)'];
+    $('players').innerHTML = S.players.map((p, i) => `
+      <div class="card pl ${i === S.turn ? 'active' : ''}" style="--c:${col[i]}">
+        <h2>${esc(p.name)} <span class="money">$${p.money}</span></h2>
+        <div class="hint" style="margin:0 0 4px">👥 ${p.team.length}/${S.max}${isFull(p) ? ' · <b style="color:var(--ok)">DOLU</b>' : ''}</div>
+        ${p.team.map(m => `<div class="mem"><span><b>${esc(m.name)}</b> ${catTags(m.cats)}</span>
+          <small>🔨 $${m.price}</small></div>`).join('') || '<div class="hint">Henüz kimse yok</div>'}
+      </div>`).join('');
+    const over = isOver();
+    $('turn').innerHTML = over ? '🏁 Oyun bitti' : `Sıra: <span style="color:${col[S.turn]}">${esc(S.players[S.turn].name)}</span>`;
+    $('actC').disabled = over;
+    $('left').textContent = `Havuzda ${S.deck.length} karakter, ${catsLeft().length} kategori kaldı.`;
+    $('vsBanner').textContent = S.vs ? `⚔ VS: ${S.vs.name}` : S.vsMode === 'rnd' ? '⚔ VS türü oyun sonunda rastgele çekilecek' : '⚔ VS türü oyun sonunda seçilecek';
+    $('undoBtn').disabled = !hist.length;
+    $('log').innerHTML = S.log.map(l => `<div>${esc(l)}</div>`).join('');
+  }
+
+  $('undoBtn').onclick = () => { if (hist.length) { S = JSON.parse(hist.pop()); closeModal(); renderGame(); } };
+  $('passBtn').onclick = () => { snap(); log(`⏭ ${S.players[S.turn].name} sırasını geçti.`); S.turn = other(S.turn); renderGame(); };
+  $('resetBtn').onclick = () => confirmBox('Oyun sıfırlansın mı?', () => { S = null; $('game').classList.add('hidden'); $('setup').classList.remove('hidden'); });
+  const teamHtml = () => S.players.map((p, i) => `<div style="text-align:left;margin-top:12px">
+      <div class="big" style="font-size:28px;color:${i ? 'var(--p2)' : 'var(--p1)'}">${esc(p.name)} <span style="color:var(--gold)">$${p.money}</span></div>
+      ${p.team.map(m => `<div class="mem"><span>${esc(m.name)} ${catTags(m.cats)}</span><small>🔨 $${m.price}</small></div>`).join('') || '<div class="hint">Boş</div>'}
+      </div>`).join('');
+  const scoreLine = () => score ? `${esc(score.names[0])} <b style="color:var(--gold)">${score.w[0]} – ${score.w[1]}</b> ${esc(score.names[1])}${score.d ? ` · ${score.d} berabere` : ''}` : '';
+  const drawVs = () => { if (!P.vs.length) return; S.vs = rnd(P.vs); log(`🎲 VS türü çekildi: ${S.vs.name}`); };
+
+  function showEnd() {
+    if (!S) return;
+    if (S.result) return showWinner();
+    if (!S.vs && S.vsMode === 'rnd') { drawVs(); renderGame(); }
+    const opts = P.vs.map(v => `<option value="${esc(v.id)}" ${S.vs && S.vs.id === v.id ? 'selected' : ''}>${esc(v.name)}</option>`).join('');
+    const vsReady = !!S.vs || !P.vs.length;
+    openModal(`<div class="big">🏁 Sonuç</div>${teamHtml()}
+      <div class="card mt" style="background:#11131a">
+        <label>⚔ VS Türü</label>
+        ${S.vs ? `<div class="big" style="font-size:32px;color:#ff9a4d">${esc(S.vs.name)}</div>${S.vs.desc ? `<div class="desc">${esc(S.vs.desc)}</div>` : ''}`
+               : P.vs.length ? '<div class="hint">VS türünü seç</div>' : '<div class="hint">Havuzda VS türü yok — direkt kazananı belirleyebilirsin.</div>'}
+        ${P.vs.length ? `<div class="row mt"><select id="eVs" style="flex:1"><option value="">— VS türü seç —</option>${opts}</select><button class="sm" id="eRnd">🎲 Rastgele</button></div>` : ''}
+      </div>
+      <div class="choices"><button class="al" id="eJudge" ${vsReady ? '' : 'disabled'}>🏆 KAZANANI BELİRLE</button><button id="mX">Kapat</button></div>`);
+    if (P.vs.length) {
+      $('eVs').onchange = e => { const v = P.vs.find(x => x.id === e.target.value); if (v) { S.vs = v; log(`⚔ VS türü seçildi: ${v.name}`); renderGame(); } showEnd(); };
+      $('eRnd').onclick = () => { drawVs(); renderGame(); showEnd(); };
+    }
+    $('eJudge').onclick = judge;
+    $('mX').onclick = closeModal;
+  }
+
+  function judge() {
+    const [a, b] = S.players;
+    openModal(`<div class="hint">⚔ ${S.vs ? esc(S.vs.name) : 'VS'}</div><div class="big">Kim kazandı?</div>
+      <div class="choices">
+        <button class="pick" id="w0" style="background:var(--p1)">🏆 ${esc(a.name)}</button>
+        <button class="pick" id="w1" style="background:var(--p2)">🏆 ${esc(b.name)}</button>
+        <button id="wd">🤝 Berabere</button><button id="wb">↩ Geri</button>
+      </div>`);
+    const set = r => {
+      snap(); S.result = r;
+      if (r === 'd') score.d++; else score.w[r]++;
+      log(r === 'd' ? '🤝 Berabere bitti.' : `🏆 Kazanan: ${S.players[r].name}${S.vs ? ` (${S.vs.name})` : ''}`);
+      renderGame(); showWinner();
+    };
+    $('w0').onclick = () => set(0); $('w1').onclick = () => set(1);
+    $('wd').onclick = () => set('d'); $('wb').onclick = showEnd;
+  }
+
+  function showWinner() {
+    const r = S.result, draw = r === 'd';
+    openModal(`<div class="trophy">${draw ? '🤝' : '🏆'}</div>
+      <div class="win">${draw ? 'BERABERE' : esc(S.players[r].name) + ' KAZANDI!'}</div>
+      ${S.vs ? `<div class="hint mt">⚔ ${esc(S.vs.name)}</div>` : ''}
+      <div class="desc mt">${scoreLine()}</div>
+      ${teamHtml()}
+      <div class="choices"><button class="al" id="reB">🔁 Rövanş</button><button id="nwB">⚙ Yeni Oyun</button><button id="mX">Kapat</button></div>`);
+    $('reB').onclick = () => { closeModal(); startGame(); };
+    $('nwB').onclick = () => { closeModal(); S = null; $('game').classList.add('hidden'); $('setup').classList.remove('hidden'); };
+    $('mX').onclick = closeModal;
+  }
+  $('endBtn').onclick = showEnd;
+
+  // ---------- ORTAK ----------
+  function openModal(html) { $('mb').innerHTML = html; $('modal').classList.remove('hidden'); }
+  function closeModal() { $('modal').classList.add('hidden'); }
+  function confirmBox(msg, yes) {
+    openModal(`<div class="desc">${esc(msg)}</div><div class="choices"><button class="ver" id="cY">Evet</button><button id="cN">Hayır</button></div>`);
+    $('cY').onclick = () => { closeModal(); yes(); }; $('cN').onclick = closeModal;
+  }
+
+  const show = v => {
+    $('navG').classList.toggle('on', v === 'g'); $('navP').classList.toggle('on', v === 'p');
+    $('poolView').classList.toggle('hidden', v !== 'p');
+    $('setup').classList.toggle('hidden', v !== 'g' || !!S);
+    $('game').classList.toggle('hidden', v !== 'g' || !S);
+  };
+  $('navG').onclick = () => show('g'); $('navP').onclick = () => show('p');
+
+  P = norm(P);
+  renderPool(); renderSetup();
+  if (!P.chars.length) show('p');
+  sync('Havuz yükleniyor...');
+
+  // paylaşımlı havuz
+  (async () => {
+    if (EMBED) { setRO(); sync('📚 Konsül havuzu (sadece görüntüleme)'); return; }
+    try {
+      if (!window.claude || typeof window.claude.use !== 'function') throw 0;
+      const [d, u] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+      if (!d) { sync('Paylaşımlı havuza erişilemedi — bu tarayıcıya kaydediliyor.'); return; }
+      db = d;
+      const w = u ? await u.can('data.write') : null;
+      if (w === false) setRO();
+      const okMsg = () => sync(canWrite ? '☁ Havuz paylaşımlı — linke giren herkes aynı havuzu görür.'
+                                        : '☁ Paylaşımlı havuz — sadece görüntüleme, düzenleme sahibinde.');
+      const t = setTimeout(() => sync('Havuza ulaşılamıyor, yeniden deneniyor...'), 10000);
+      db.doc('pool/main').onSnapshot(s => {
+        if (!s.metadata.fromCache) clearTimeout(t);
+        if (s.exists) { P = norm(s.data()); store.set('aav_pool', P); renderPool(); renderSetup(); okMsg(); }
+        else if (!s.metadata.fromCache) {
+          if (canWrite && (P.chars.length || P.vs.length)) savePool(); // yerel havuzu buluta taşı
+          else if (!canWrite) { P = norm({}); renderPool(); renderSetup(); }
+          okMsg();
+        }
+      }, e => { clearTimeout(t); sync('Havuz bağlantısı koptu: ' + (e?.message || '') + ' — sayfayı yenile.'); });
+    } catch { sync('Bu tarayıcıya kaydediliyor (paylaşım kapalı).'); }
+  })();
+})();
+</script>
+</body>
+</html>
